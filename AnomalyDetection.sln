@@ -1,0 +1,60 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Express 2013 for Windows Desktop
+VisualStudioVersion = 12.0.30723.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataManagement", "DataManager\DataManagement.csproj", "{CF0B7A4E-C7AC-40DD-B279-FCC14B054089}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C53FBD46-641A-4DDD-9B9D-938B66F74BDE} = {C53FBD46-641A-4DDD-9B9D-938B66F74BDE}
+		{CF0907BE-BB15-4E96-97ED-B845A250374A} = {CF0907BE-BB15-4E96-97ED-B845A250374A}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client", "Client\Client.csproj", "{31B40988-1B1C-4886-B3CC-B6261DF0EA6A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C53FBD46-641A-4DDD-9B9D-938B66F74BDE} = {C53FBD46-641A-4DDD-9B9D-938B66F74BDE}
+		{CF0B7A4E-C7AC-40DD-B279-FCC14B054089} = {CF0B7A4E-C7AC-40DD-B279-FCC14B054089}
+		{BECA34F6-7DB3-4AED-B8F0-B7A7057E2FCD} = {BECA34F6-7DB3-4AED-B8F0-B7A7057E2FCD}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnomalyDetectionAlgorithm", "AnomalyDetectionAlgorithm\AnomalyDetectionAlgorithm.csproj", "{BECA34F6-7DB3-4AED-B8F0-B7A7057E2FCD}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C53FBD46-641A-4DDD-9B9D-938B66F74BDE} = {C53FBD46-641A-4DDD-9B9D-938B66F74BDE}
+		{CF0B7A4E-C7AC-40DD-B279-FCC14B054089} = {CF0B7A4E-C7AC-40DD-B279-FCC14B054089}
+		{CF0907BE-BB15-4E96-97ED-B845A250374A} = {CF0907BE-BB15-4E96-97ED-B845A250374A}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataStructures", "Timeseries\DataStructures.csproj", "{CF0907BE-BB15-4E96-97ED-B845A250374A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Parameters", "Parameters\Parameters.csproj", "{C53FBD46-641A-4DDD-9B9D-938B66F74BDE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CF0B7A4E-C7AC-40DD-B279-FCC14B054089}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF0B7A4E-C7AC-40DD-B279-FCC14B054089}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF0B7A4E-C7AC-40DD-B279-FCC14B054089}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF0B7A4E-C7AC-40DD-B279-FCC14B054089}.Release|Any CPU.Build.0 = Release|Any CPU
+		{31B40988-1B1C-4886-B3CC-B6261DF0EA6A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{31B40988-1B1C-4886-B3CC-B6261DF0EA6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{31B40988-1B1C-4886-B3CC-B6261DF0EA6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{31B40988-1B1C-4886-B3CC-B6261DF0EA6A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BECA34F6-7DB3-4AED-B8F0-B7A7057E2FCD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BECA34F6-7DB3-4AED-B8F0-B7A7057E2FCD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BECA34F6-7DB3-4AED-B8F0-B7A7057E2FCD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BECA34F6-7DB3-4AED-B8F0-B7A7057E2FCD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CF0907BE-BB15-4E96-97ED-B845A250374A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF0907BE-BB15-4E96-97ED-B845A250374A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF0907BE-BB15-4E96-97ED-B845A250374A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF0907BE-BB15-4E96-97ED-B845A250374A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C53FBD46-641A-4DDD-9B9D-938B66F74BDE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C53FBD46-641A-4DDD-9B9D-938B66F74BDE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C53FBD46-641A-4DDD-9B9D-938B66F74BDE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C53FBD46-641A-4DDD-9B9D-938B66F74BDE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

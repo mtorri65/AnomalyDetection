@@ -1,0 +1,7 @@
+restart	no
+scalingType	z-normalize
+trainTimeWindowsNumber	3
+distMatrixExists	no
+anomalyThreshold	3
+anomaliesClusterSizeThreshold	0.2
+mergeDistanceRatioThreshold	1.5

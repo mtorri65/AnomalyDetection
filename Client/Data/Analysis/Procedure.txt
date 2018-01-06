@@ -1,0 +1,53 @@
+- Load first week of data (W1)
+- Add noise to W1 (W1+N)
+- Calculate W1 PSD
+- Calculate W1+N PSD
+- Calculate W1 PSD - W1+N PSD (W1N Diff)
+- Load second week of data (W2)
+- Calculate W2 PSD
+- Calculate W2 PSD - W1 PSD (W21 Diff)
+
+Observation: if there are no changes in behaviour in the second week, then W21 Diff will be just noise, that is it will look similar to W1N Diff. If, on the other hand, an anomaly arises in week 2, then W21 Diff will look quite different from W1N Diff
+
+Next step: how to we define a distance between WN(N-1) Diff and W1N Diff that is essentially zero if WN(N-1) Diff is just noise, but quite different if there is an anomaly in WN(N-1) Diff?
+
+Candidate: Distance (Tx, Ty) = Sum_i (Tx_i - Ty_i)
+This is better than the average as the latter will produce much smaller values (it is the Sum / N) and it will make the distance function less sensitive towards small differences
+
+Challenge: a threshold needs to be defined on the Distance so that if Distance is less than the threshold, then we can say that there is no significant change in behaviour from week to week. However, it is not possible to define a universal threshold as the "physiological" variation in the data from week to week depends on the monitored system. It makes more sense to add a user defined threshold that can be tweaked as the weeks go by so that eventually the distance function is able to discriminate between noise and true anomalies. 
+
+Solution: a sharp threshold for anomaly detection will not work, as the timeseries we are using have finite lengths, which means that their average is never exactly zero, even if they were completely random. Moreover, the average will never be the same between different runs as the noise fluctuates from run to run. Defining a range of averages and checking whether the average of subsequent timeseries falls within or outside the min as [min, max] of the average of the noise over many runs provides the solution. As the user tweaks the threshold, the range gets tweaked as well
+
+
+First week: 
+- for every location
+-- load the timeseries for the first week
+-- calculate the PSD of timeseries
+-- add noise to the timeseries
+-- calculate the PSD of the timeseries plus noise
+-- calculate the difference between the timeseries PSD (W1 PSD) and the (timeseries + noise) PSD (PSD W1N). We call this difference DeltaPSD1N
+-- rescale DeltaPSD1N
+-- calculate average min and max of DeltaPSD1N
+-- persist min and max of DeltaPSD1N (if min and max are not defined, then it means that this location was never processed by the algorithm)
+
+Subsequent weeks:
+- for every location
+-- check if the location is ANOMALOUS
+--- if it is not anomalous then
+---- load the timeseries for the current week
+---- calculate the PSD of timeseries (Wn PSD; n is the week number)
+---- calculate the difference between Wn PSD and W1 PSD. We call this difference DeltaPSDn1
+---- rescale DeltaPSDn1
+---- calculate average of DeltaPSDn1
+---- compare the average of DeltaPSDn1 against the [min, max] range of DeltaPSD1N 
+---- if average of DeltaPSDn1 is within the range, then no anomaly is detected
+---- if average of DeltaPSDn1 is outside the range, then an anomaly is detected
+----- notify user
+----- mark that location as ANOMALOUS
+--- if it is anomalous then
+---- do the steps for the not anomalous state by calculating DeltaPSDn1 and check if the anomaly is still there
+---- in addition, calculate DeltaPSDn,n-1 to check whether the anomaly has changed (if DeltaPSDn,n-1 is just random then no change in anomaly)
+
+Challenge: if the timeseries of week 1 (W1 T) has a period that doesn't fit an exact number of times within a week, then the timeseries of week 2 (W2 T) will be shifted compared to W1 T. If that happens, then the two timeseries will be considered quite different by the algorithm described above and an anomaly will be flagged in the second week even if there is no material change in the behaviour of the system (same timeseries except for noise and shift). How do we make sure that the algorithm doesn't consider a shift a material change in W2 T compared to W1 T?
+
+Solution: If W1 T has a period equal to W1 P, then W1 PSD will have a very pronounced peak at a frequency that correspond to W1 P. From the position of the peak in W1 PSD (w_peak) it is possible to derive W1 P as W1 P = [N / w_peak], where N is the number of points in W1 T and the square bracket indicates the value of N / w_peak truncated to the lower closest integer. Now if there are no material changes in W2 T as compared to W1 P except for a shift, then W2 P will be the same as W1 P. Then the idea is that if we shift left or right W2 T by an amount between 1 and W1 P and we calculate the euclidean difference between W1 P and W2 P shifted, the distance should reach a minimum when the peaks of the two timeseries overlaps. It is however important to realize that shifting W2 T will remove some values on the side in the direction of the shift, making W2 T shorter. We can easily circumvent this problem by reducing the length of W1 T by the same amount of the shift applied to W2 T. Every time the shift is increased by 1 in a given direction, the euclidean distance between the two reduced timeseries is calculated. W2 T will first be shifted towards the left from 1 to W1 P and then to the right from 1 to W2 P. Once this is complete, the minimum euclidean distance is determined and the corresponding shift is derived. At that point the portion of the algorithm described above for Subsequent Weeks is applied
