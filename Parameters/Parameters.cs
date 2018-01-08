@@ -9,12 +9,9 @@ namespace ConfigurationParameters
     public class Parameters
     {
         public string restart;
-        public string scalingType;
         public int trainTimeWindowsNumber;
-        public string distMatrixExists;
         public double anomalyThreshold;
-        public double anomaliesClusterSizeThreshold;
-        public double mergeDistanceRatioThreshold;
-        public string PSD;
+        public int reportingFrequency;
+        public int timeWindowLength;
     }
 }

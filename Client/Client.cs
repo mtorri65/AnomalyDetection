@@ -19,6 +19,7 @@ namespace Client
             if (parameters.restart.Equals("yes"))
             {
                 DataManager.CleanUpOutput(@".\Output\");
+                DataManager.CompressZediAccessData();
 
                 if (locations.Count > 0)
                 {
@@ -34,11 +35,11 @@ namespace Client
 
             foreach (string location in locations)
             {
-                bool isThereDataThisTimeWindow = DataManager.RetrieveLastTimewindowData(location, timeWindowNumber, physicalQuantityToMonitor);
-                if (isThereDataThisTimeWindow)
-                {
-                    algorithm.Detect_Time(parameters, location);
-                }
+                bool isThereDataThisTimeWindow = DataManager.RetrieveLastTimewindowData(location, timeWindowNumber, physicalQuantityToMonitor, parameters);
+//                if (isThereDataThisTimeWindow)
+//                {
+                    algorithm.Detect(parameters, location);
+//                }
             }
             ++algorithm.timeWindowNumber;
 
@@ -64,19 +65,9 @@ namespace Client
                         parameters.restart = value;
                         continue;
                     }
-                    if (input.Contains("scalingType"))
-                    {
-                        parameters.scalingType = value;
-                        continue;
-                    }
                     if (input.Contains("trainTimeWindowsNumber"))
                     {
                         parameters.trainTimeWindowsNumber = Convert.ToInt32(value);
-                        continue;
-                    }
-                    if (input.Contains("distMatrixExists"))
-                    {
-                        parameters.distMatrixExists = value;
                         continue;
                     }
                     if (input.Contains("anomalyThreshold"))
@@ -84,14 +75,14 @@ namespace Client
                         parameters.anomalyThreshold = Convert.ToDouble(value);
                         continue;
                     }
-                    if (input.Contains("anomaliesClusterSizeThreshold"))
+                    if (input.Contains("reportingFrequency"))
                     {
-                        parameters.anomaliesClusterSizeThreshold = Convert.ToDouble(value);
+                        parameters.reportingFrequency = Convert.ToInt32(value);
                         continue;
                     }
-                    if (input.Contains("mergeDistanceRatioThreshold"))
+                    if (input.Contains("timeWindowLength"))
                     {
-                        parameters.mergeDistanceRatioThreshold = Convert.ToDouble(value);
+                        parameters.timeWindowLength = Convert.ToInt32(value);
                         continue;
                     }
                 }

@@ -1,7 +1,5 @@
-restart	no
-scalingType	z-normalize
-trainTimeWindowsNumber	3
-distMatrixExists	no
+restart	yes
+minimumTimewindowsNumberToCollectStatistics	3
 anomalyThreshold	3
-anomaliesClusterSizeThreshold	0.2
-mergeDistanceRatioThreshold	1.5
+reportingFrequency	300
+timeWindowLength	86400
