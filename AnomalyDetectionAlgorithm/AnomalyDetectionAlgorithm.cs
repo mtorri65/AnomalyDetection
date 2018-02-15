@@ -28,45 +28,102 @@ namespace AnomalyDetection
             Location location = locations.Find(x => x.name == locationName);
 
             Timeseries thisTimeWindowSample = DataManager.ReadTimeSeries(location.name, timeWindowNumber);
-            if (timeWindowNumber == 1)
+            List<Timeseries> lts = new List<Timeseries>();
+            if (thisTimeWindowSample.length == 0)
             {
-                List<List<double>> DTWtimeWindowDistances = new List<List<double>>();
-                DTWtimeWindowDistances.Add(new List<double>(new double[1]));
-                DTWdistancesEvolution.Add(location.name, DTWtimeWindowDistances);
+                if (timeWindowNumber == 1)
+                {
+                    List<List<double>> DTWtimeWindowDistances = new List<List<double>>();
+                    DTWtimeWindowDistances.Add(new List<double>(new double[1]));
+                    DTWdistancesEvolution.Add(location.name, DTWtimeWindowDistances);
 
-                List<Timeseries> lts = new List<Timeseries>();
-                lts.Add(thisTimeWindowSample);
-                timeSamples.Add(location.name, lts);
+                    lts.Add(thisTimeWindowSample);
+                    timeSamples.Add(location.name, lts); 
+                }
+                else 
+                {
+                    // add one extra column (and one extra row) to the Distance Matrix by including this timeWindowNumber's timeseries in it
+                    for (int row = 0; row < DTWdistancesEvolution[location.name].Count; row++)
+                    {
+                        DTWdistancesEvolution[location.name][row].Add(0.0);
+                    }
+                    DTWdistancesEvolution[location.name].Add((new double[DTWdistancesEvolution[location.name].Count + 1]).ToList());
+
+                    timeSamples[location.name].Add(thisTimeWindowSample);
+
+                    // remove the first column and the first row if DTWdistancesEvolution[location.name].Count is > than 10
+                    if (timeWindowNumber >= parameters.timeWindowNumberCutoff)
+                    {
+                        DTWdistancesEvolution[location.name].RemoveAt(0);
+
+                        for (int row = 0; row < DTWdistancesEvolution[location.name].Count; row++)
+                        {
+                            DTWdistancesEvolution[location.name][row].RemoveAt(0);
+                        }
+                    }
+
+                    timeSamples[location.name].RemoveAt(0);
+                }
 
                 return;
             }
-
-            // add one extra column (and one extra row) to the Distance Matrix by including this timeWindowNumber's timeseries in it
-            for (int row = 0; row < DTWdistancesEvolution[location.name].Count; row++)
+            else
             {
-                DTWdistancesEvolution[location.name][row].Add(0.0);
-            }
-            DTWdistancesEvolution[location.name].Add((new double[DTWdistancesEvolution[location.name].Count + 1]).ToList());
-
-            for (int i = 0; i < DTWdistancesEvolution[location.name].Count; i++)
-            {
-                if (i < DTWdistancesEvolution[location.name].Count - 1)
+                if (timeWindowNumber == 1)
                 {
-                    Timeseries sampleShifted = ShiftTimeseries(timeSamples[location.name][i], thisTimeWindowSample);
-                    List<DateTime> aggregateDatetimes = CreateDatetimesAggregate(timeSamples[location.name][i], sampleShifted);
-                    Timeseries sampleStretched1 = StretchTimeseries(timeSamples[location.name][i], aggregateDatetimes);
-                    Timeseries sampleStretched2 = StretchTimeseries(sampleShifted, aggregateDatetimes);
+                    List<List<double>> DTWtimeWindowDistances = new List<List<double>>();
+                    DTWtimeWindowDistances.Add(new List<double>(new double[1]));
+                    DTWdistancesEvolution.Add(location.name, DTWtimeWindowDistances);
 
-                    DTWdistancesEvolution[location.name][i][DTWdistancesEvolution[location.name].Count - 1] = CalculateDTWDistance(sampleStretched1, sampleStretched2);
-                    DTWdistancesEvolution[location.name][DTWdistancesEvolution[location.name].Count - 1][i] = DTWdistancesEvolution[location.name][i][DTWdistancesEvolution[location.name].Count - 1];
+                    lts.Add(thisTimeWindowSample);
+                    timeSamples.Add(location.name, lts);
+
+                    return;
                 }
-                else
+
+                // add one extra column (and one extra row) to the Distance Matrix by including this timeWindowNumber's timeseries in it
+                for (int row = 0; row < DTWdistancesEvolution[location.name].Count; row++)
                 {
-                    DTWdistancesEvolution[location.name][i][DTWdistancesEvolution[location.name].Count - 1] = 0.0; // diagonal term
+                    DTWdistancesEvolution[location.name][row].Add(0.0);
                 }
+                DTWdistancesEvolution[location.name].Add((new double[DTWdistancesEvolution[location.name].Count + 1]).ToList());
+                timeSamples[location.name].Add(thisTimeWindowSample);
+
+                for (int i = 0; i < DTWdistancesEvolution[location.name].Count; i++)
+                {
+                    if (timeSamples[location.name][i].length > 0)
+                    {
+                        Timeseries sampleShifted = ShiftTimeseries(timeSamples[location.name][i], thisTimeWindowSample);
+                        List<DateTime> aggregateDatetimes = CreateDatetimesAggregate(timeSamples[location.name][i], sampleShifted);
+                        Timeseries sampleStretched1 = StretchTimeseries(timeSamples[location.name][i], aggregateDatetimes);
+                        Timeseries sampleStretched2 = StretchTimeseries(sampleShifted, aggregateDatetimes);
+
+                        DTWdistancesEvolution[location.name][i][DTWdistancesEvolution[location.name].Count - 1] = CalculateDTWDistance(sampleStretched1, sampleStretched2);
+                        DTWdistancesEvolution[location.name][DTWdistancesEvolution[location.name].Count - 1][i] = DTWdistancesEvolution[location.name][i][DTWdistancesEvolution[location.name].Count - 1];
+                    }
+                    else
+                    {
+                        DTWdistancesEvolution[location.name][i][DTWdistancesEvolution[location.name].Count - 1] = 0.0; // if timesamples is empty, then set the distance to it equal to zero
+                    }
+
+                    DTWdistancesEvolution[location.name][i][i] = 0.0; // diagonal term
+                }
+
+                // remove the first column and the first row if DTWdistancesEvolution[location.name].Count is > than 10
+                if(timeWindowNumber >= parameters.timeWindowNumberCutoff)
+                {
+                    DTWdistancesEvolution[location.name].RemoveAt(0);
+
+                    for (int row = 0; row < DTWdistancesEvolution[location.name].Count; row++)
+                    {
+                        DTWdistancesEvolution[location.name][row].RemoveAt(0);
+                    }
+
+                    timeSamples[location.name].RemoveAt(0);
+                }
+
+                CreateClusters(location, parameters);
             }
-            timeSamples[location.name].Add(thisTimeWindowSample);
-            CreateClusters(location, parameters);
         }
 
         public double CalculateDTWDistance(Timeseries seriesTimeWindow1, Timeseries seriesTimeWindow2)
@@ -218,44 +275,52 @@ namespace AnomalyDetection
                 }
             }
 
+            // remove all zeros
+            var distancesPreviousTimeWindowsNoZeros = distancesPreviousTimeWindows.Where(i => i != 0).ToList();
+            var distancesNewTimeWindowNoZeros = distancesNewTimeWindow.Where(i => i != 0).ToList();
+
             // calculate the median of the distances up to the previous timewindow
-            double medianPreviousTimewindows = CalculateMedian(distancesPreviousTimeWindows.ToList());
-
-            // calculate the absolute deviations associated with the latest timewindow
-            List<double> absoluteDeviations = new List<double>();
-            for (int i = 0; i < distancesNewTimeWindow.Count; i++)
-            {
-                absoluteDeviations.Add(Math.Abs(distancesNewTimeWindow[i] - medianPreviousTimewindows));
-            }
-            minAbsoluteDeviations.Add(absoluteDeviations.Min());
-
-            DetectOutliers(minAbsoluteDeviations, parameters);
-
+//            double medianPreviousTimewindows = CalculateMedian(distancesPreviousTimeWindows.ToList());
             List<double> minAbsoluteDeviationsWithoutOutliers = new List<double>();
-            if(outliers.Count > 0)
+            if (distancesPreviousTimeWindowsNoZeros.Count > 0)
             {
-                for (int i = 0; i < minAbsoluteDeviations.Count; i++)
+                double medianPreviousTimewindows = CalculateMedian(distancesPreviousTimeWindowsNoZeros.ToList());
+
+                // calculate the absolute deviations associated with the latest timewindow
+                List<double> absoluteDeviations = new List<double>();
+                for (int i = 0; i < /*distancesNewTimeWindow*/distancesNewTimeWindowNoZeros.Count; i++)
                 {
-                    for (int j = 0; j < outliers.Count; j++)
+                    absoluteDeviations.Add(Math.Abs(/*distancesNewTimeWindow*/distancesNewTimeWindowNoZeros[i] - medianPreviousTimewindows));
+                }
+                minAbsoluteDeviations.Add(absoluteDeviations.Min());
+
+                DetectOutliers(minAbsoluteDeviations, parameters);
+
+                if (outliers.Count > 0)
+                {
+                    for (int i = 0; i < minAbsoluteDeviations.Count; i++)
                     {
-                        if (i != outliers[j])
+                        for (int j = 0; j < outliers.Count; j++)
                         {
-                            minAbsoluteDeviationsWithoutOutliers.Add(minAbsoluteDeviations[i]);
-                            break;
+                            if (i != outliers[j])
+                            {
+                                minAbsoluteDeviationsWithoutOutliers.Add(minAbsoluteDeviations[i]);
+                                break;
+                            }
                         }
                     }
-                }
-                double noOutliersMedian = CalculateMedian(minAbsoluteDeviationsWithoutOutliers);
+                    double noOutliersMedian = CalculateMedian(minAbsoluteDeviationsWithoutOutliers);
 
-                minAbsoluteDeviationsWithoutOutliers = new List<double>(minAbsoluteDeviations);
-                for (int i = 0; i < minAbsoluteDeviations.Count; i++)
-                {
-                    for (int j = 0; j < outliers.Count; j++)
+                    minAbsoluteDeviationsWithoutOutliers = new List<double>(minAbsoluteDeviations);
+                    for (int i = 0; i < minAbsoluteDeviations.Count; i++)
                     {
-                        if (i == outliers[j])
+                        for (int j = 0; j < outliers.Count; j++)
                         {
-                            minAbsoluteDeviationsWithoutOutliers[i] = noOutliersMedian;
-                            break;
+                            if (i == outliers[j])
+                            {
+                                minAbsoluteDeviationsWithoutOutliers[i] = noOutliersMedian;
+                                break;
+                            }
                         }
                     }
                 }

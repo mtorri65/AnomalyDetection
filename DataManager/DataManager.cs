@@ -17,7 +17,14 @@ namespace DataManagement
             string timeseriesFilePath;
             timeseriesFilePath = @".\Output\Support\TimeWindow" + timeWindowNumber + @"\" + locationName + @"\" + timeWindowNumber + ".csv";
 
-            Decompress(new FileInfo(timeseriesFilePath));
+            if (File.Exists(timeseriesFilePath + ".gz"))
+            {
+                Decompress(new FileInfo(timeseriesFilePath));
+            }
+            else
+            {
+                return new Timeseries();
+            }
 
             string input;
             List<DateTime> dateTimes = new List<DateTime>();
@@ -126,7 +133,7 @@ namespace DataManagement
             }
         }
 
-        public static bool RetrieveLastTimewindowData(string locationName, int timeWindowNumber, int physicalQuantityToMonitor, Parameters parameters)
+        public static void RetrieveLastTimewindowData(string locationName, int timeWindowNumber, int physicalQuantityToMonitor, Parameters parameters)
         {
             bool isThereData = true;
 
@@ -134,12 +141,7 @@ namespace DataManagement
             //            if (data.Count == 0)
             if (data.Count < .90 * parameters.timeWindowLength / parameters.reportingFrequency)
             {
-//                string fileName = @".\Output\Support\Train\" + locationName + "_log.csv";
-//                using (StreamWriter sw = new StreamWriter(fileName, true))
-//                {
-//                    sw.WriteLine("NO DATA");
-                    isThereData = false;
-//                }
+                isThereData = false;
             }
             else
             {
@@ -168,10 +170,9 @@ namespace DataManagement
                 {
                     Compress(new FileInfo(@".\HistorianDatabase\" + locationName));
                 }
-                CreateLocationSupportFiles(data, locationName, timeWindowNumber, physicalQuantityToMonitor, parameters);
             }
 
-            return isThereData;
+            CreateLocationSupportFiles(data, locationName, timeWindowNumber, physicalQuantityToMonitor, parameters, isThereData);
         }
 
         public static void WriteDistanceMatrix(Location location, Parameters parameters, 
@@ -209,12 +210,24 @@ namespace DataManagement
         {
             using (StreamWriter sw = new StreamWriter(@".\Output\Analysis\" + location.name + @"\TimeEvolution_" + location.name, true))
             {
-                string outlier = minAbsoluteDeviations.Last().ToString();
-                if (outliers.Count > 0)
+                string outlier = "";
+                double minAbsoluteDeviationsLast = 0.0;
+                if (minAbsoluteDeviations.Count > 0)
                 {
-                    outlier = minAbsoluteDeviationsWithoutOutliers.Last() + ",";
+                    outlier = minAbsoluteDeviations.Last().ToString();
+                    if (minAbsoluteDeviationsWithoutOutliers.Count > 0)
+                    {
+                        outlier = minAbsoluteDeviationsWithoutOutliers.Last() + ",";
+                    }
+
+                    minAbsoluteDeviationsLast = minAbsoluteDeviations.Last();
                 }
-                sw.WriteLine(timeWindowNumber + "," + minAbsoluteDeviations.Last() + "," + outlier);
+                else
+                {
+                    minAbsoluteDeviationsLast = 0.0;
+                }
+
+                sw.WriteLine(timeWindowNumber + "," + minAbsoluteDeviationsLast + "," + outlier);
             }
         }
 
@@ -222,12 +235,18 @@ namespace DataManagement
                                                         string location,                                                
                                                         int timeWindowNumber,
                                                         int physicalQuantityToMonitor,
-                                                        Parameters parameters)
+                                                        Parameters parameters,
+                                                        bool isThereData)
         {
             string locationSupportFolder = @".\Output\Support\Timewindow" + timeWindowNumber + @"\" + location;
             Directory.CreateDirectory(locationSupportFolder);
             string locationAnalysisFolder = @".\Output\Analysis\" + location;
             Directory.CreateDirectory(locationAnalysisFolder);
+
+            if(!isThereData)
+            {
+                return;
+            }
 
             DateTime firstTimestamp = data.First().Key;
             DateTime lastTimestamp = data.Last().Key;

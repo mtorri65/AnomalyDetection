@@ -1,5 +1,6 @@
-restart	yes
+restart	no
 minimumTimewindowsNumberToCollectStatistics	3
+timeWindowNumberCutoff	30
 anomalyThreshold	3
 reportingFrequency	300
 timeWindowLength	86400

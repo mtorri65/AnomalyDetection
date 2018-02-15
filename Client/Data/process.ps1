@@ -2,7 +2,7 @@ Do {
     If (!(Get-Process -name Client -ErrorAction SilentlyContinue)) {
            Write-Host "Wating for Process to Start"
            Start-Sleep -Seconds 2.0
-		   Start-Process "C:\Projects\Analytics\AnomalyDetection\Client\Data\client.exe"
+		   Start-Process "C:\Projects\Analytics\AnomalyDetection\Client\Data\client.exe" -WindowStyle Minimized
     }Else {
            Write-Host 'Process has Started'
            While (Get-Process -name Client -ErrorAction SilentlyContinue) {

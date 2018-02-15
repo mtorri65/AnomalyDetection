@@ -20,6 +20,5 @@ C:\Projects\Analytics\AnomalyDetection\AnomalyDetectionAlgorithm\bin\Debug\DataM
 C:\Projects\Analytics\AnomalyDetection\AnomalyDetectionAlgorithm\bin\Debug\Parameters.pdb
 C:\Projects\Analytics\AnomalyDetection\AnomalyDetectionAlgorithm\bin\Debug\Timeseries.pdb
 C:\Projects\Analytics\AnomalyDetection\AnomalyDetectionAlgorithm\obj\Debug\AnomalyDetectionAlgorithm.csprojResolveAssemblyReference.cache
-C:\Projects\Analytics\AnomalyDetection\AnomalyDetectionAlgorithm\obj\Debug\AnomalyDetectionAlgorithm.csproj.CoreCompileInputs.cache
 C:\Projects\Analytics\AnomalyDetection\AnomalyDetectionAlgorithm\obj\Debug\AnomalyDetectionAlgorithm.dll
 C:\Projects\Analytics\AnomalyDetection\AnomalyDetectionAlgorithm\obj\Debug\AnomalyDetectionAlgorithm.pdb

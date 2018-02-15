@@ -35,11 +35,9 @@ namespace Client
 
             foreach (string location in locations)
             {
-                bool isThereDataThisTimeWindow = DataManager.RetrieveLastTimewindowData(location, timeWindowNumber, physicalQuantityToMonitor, parameters);
-//                if (isThereDataThisTimeWindow)
-//                {
-                    algorithm.Detect(parameters, location);
-//                }
+                /*bool isThereDataThisTimeWindow =*/ DataManager.RetrieveLastTimewindowData(location, timeWindowNumber, physicalQuantityToMonitor, parameters);
+                
+                algorithm.Detect(parameters, location);
             }
             ++algorithm.timeWindowNumber;
 
@@ -68,6 +66,11 @@ namespace Client
                     if (input.Contains("trainTimeWindowsNumber"))
                     {
                         parameters.trainTimeWindowsNumber = Convert.ToInt32(value);
+                        continue;
+                    }
+                    if (input.Contains("timeWindowNumberCutoff"))
+                    {
+                        parameters.timeWindowNumberCutoff = Convert.ToInt32(value);
                         continue;
                     }
                     if (input.Contains("anomalyThreshold"))

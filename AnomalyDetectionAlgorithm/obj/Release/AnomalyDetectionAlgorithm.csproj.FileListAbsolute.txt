@@ -10,3 +10,15 @@ C:\Projects\Analytics\Anomaly\AnomalyDetectionAlgorithm\bin\Release\Timeseries.d
 C:\Projects\Analytics\Anomaly\AnomalyDetectionAlgorithm\bin\Release\Parameters.pdb
 C:\Projects\Analytics\Anomaly\AnomalyDetectionAlgorithm\bin\Release\Timeseries.pdb
 C:\Projects\Analytics\Anomaly\AnomalyDetectionAlgorithm\obj\Release\AnomalyDetectionAlgorithm.csprojResolveAssemblyReference.cache
+C:\Projects\Analytics\AnomalyDetection\AnomalyDetectionAlgorithm\bin\Release\AnomalyDetectionAlgorithm.dll
+C:\Projects\Analytics\AnomalyDetection\AnomalyDetectionAlgorithm\bin\Release\AnomalyDetectionAlgorithm.pdb
+C:\Projects\Analytics\AnomalyDetection\AnomalyDetectionAlgorithm\bin\Release\alglibnet2.dll
+C:\Projects\Analytics\AnomalyDetection\AnomalyDetectionAlgorithm\bin\Release\DataManager.dll
+C:\Projects\Analytics\AnomalyDetection\AnomalyDetectionAlgorithm\bin\Release\Parameters.dll
+C:\Projects\Analytics\AnomalyDetection\AnomalyDetectionAlgorithm\bin\Release\Timeseries.dll
+C:\Projects\Analytics\AnomalyDetection\AnomalyDetectionAlgorithm\bin\Release\DataManager.pdb
+C:\Projects\Analytics\AnomalyDetection\AnomalyDetectionAlgorithm\bin\Release\Parameters.pdb
+C:\Projects\Analytics\AnomalyDetection\AnomalyDetectionAlgorithm\bin\Release\Timeseries.pdb
+C:\Projects\Analytics\AnomalyDetection\AnomalyDetectionAlgorithm\obj\Release\AnomalyDetectionAlgorithm.csprojResolveAssemblyReference.cache
+C:\Projects\Analytics\AnomalyDetection\AnomalyDetectionAlgorithm\obj\Release\AnomalyDetectionAlgorithm.dll
+C:\Projects\Analytics\AnomalyDetection\AnomalyDetectionAlgorithm\obj\Release\AnomalyDetectionAlgorithm.pdb

@@ -10,6 +10,7 @@ namespace ConfigurationParameters
     {
         public string restart;
         public int trainTimeWindowsNumber;
+        public int timeWindowNumberCutoff;
         public double anomalyThreshold;
         public int reportingFrequency;
         public int timeWindowLength;
